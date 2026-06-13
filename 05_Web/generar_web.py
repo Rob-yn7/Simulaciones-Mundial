@@ -55,8 +55,8 @@ def p_poisson_mas_de(lam, linea):
 def construir_datos():
     df_mundial_grupos, df_vars, grupos, fechas_reales = pm.cargar_mundial()
 
-    # Probabilidades calibradas sin temperatura: las adecuadas para mostrar
-    pred = pm.pipeline_prediccion(df_mundial_grupos, sede_neutral=True, T=1.0)
+    # Probabilidades calibradas CON TEMPERATURA para ver como se estan asumiendo las simulaciones
+    pred = pm.pipeline_prediccion(df_mundial_grupos, sede_neutral=True, T=.27)
     pred['Grupo'] = df_mundial_grupos['Grupo'].values
 
     stats = df_vars.set_index('Equipo')
