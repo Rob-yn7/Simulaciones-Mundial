@@ -35,7 +35,7 @@ Con los datos listos, en `Modelling.ipynb` se entrenan dos modelos:
 ├── 02_Limpieza_Datos/        # JOIN y limpieza → dataset modelable
 │   └── Data Cleaning.ipynb
 ├── 03_Modelado_Simulacion/   # Ingeniería de variables, XGBoost y Monte Carlo
-│   └── Modelling.ipynb
+│   └── Poisson_octavos_VSC.ipynb
 ├── Data/                     # Datos scrapeados y procesados (CSV)
 ```
 
