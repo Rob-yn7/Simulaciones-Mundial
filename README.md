@@ -16,10 +16,12 @@ El notebook `Data Cleaning.ipynb` hace el JOIN de las distintas fuentes descarga
 Sobre los datos limpios se construyen **medias móviles (últimos 5 partidos e histórico), ratios y diferencias** entre equipos para capturar el *estado de forma* de cada selección justo antes del partido: diferencia de puntos Elo/FIFA, probabilidad implícita del Elo, tiers de nivel, pesos por confederación y diferenciales de cada estadística. Eso es lo que el modelo "ve" para predecir el resultado.
 
 ### 4️⃣ Dos modelos XGBoost — [`03_Modelado_Simulacion/`](03_Modelado_Simulacion/)
-Con los datos listos, en `Modelling.ipynb` se entrenan dos modelos:
+Con los datos listos se entrenan dos modelos:
 
 1. **Modelo de goles**: dos regresores XGBoost con objetivo Tweedie (a medio camino entre Poisson y Gamma, ideal para fútbol) que predicen los goles esperados de cada equipo.
 2. **Modelo de resultado**: un clasificador XGBoost 1X2 que usa como meta-variables las predicciones de goles del primero, con **probabilidades calibradas** (calibración isotónica) y validación temporal para no mezclar pasado y futuro.
+
+Este entrenamiento y la simulación posterior se repiten notebook a notebook a medida que avanza el torneo real, reentrenando/recalculando cada vez con los cruces ya conocidos: `Poisson_16avos_VSC.ipynb`, `Poisson_octavos_VSC.ipynb`, `Poisson_cuartos_VSC.ipynb` y `Poisson_semifinales_VSC.ipynb`.
 
 ### 5️⃣ El comportamiento estocástico: Monte Carlo con 1000 mundiales
 ¿Por qué no basta con simular un mundial? Porque la realidad es **estocástica**. Si solo simulásemos uno, una selección con el 51% de probabilidades de pasar, pasaría exactamente igual que una con el 99%. Para capturar el efecto de la varianza, simulamos **1000 mundiales diferentes**: el equipo del 51% se clasifica en ~5.100 de ellos y el del 99% en ~9.900. Así vemos el efecto de las probabilidades en todos los cruces que tendríamos hasta la final — fase de grupos partido a partido, mejores terceros, dieciseisavos, octavos, cuartos, semifinales y final.
@@ -109,6 +111,94 @@ Se muestra una tirada estocástica completa del cuadro eliminatorio (partido a p
 
 ---
 
+## 🏆 Tabla de probabilidades de campeón
+
+A diferencia de la tabla anterior (una única tirada estocástica), aquí se agregan las **1000 simulaciones de Monte Carlo**: para cada selección clasificada, el porcentaje de veces que alcanzó cada ronda. Las columnas son acumulativas — la probabilidad de llegar a Cuartos ya incluye haber superado R32 y Octavos. Igual que arriba, hay una tabla por notebook, según la ronda real en la que quedó el torneo al momento de correr la simulación.
+
+### Desde dieciseisavos (R32)
+
+| Selección | R32 | Octavos | Cuartos | Semis | Final | Campeón |
+|---|---|---|---|---|---|---|
+| Inglaterra | 100.0 | 88.4 | 71.3 | 45.0 | 28.8 | 18.0 |
+| Argentina | 100.0 | 85.1 | 67.9 | 48.7 | 25.8 | 13.7 |
+| España | 100.0 | 78.1 | 52.9 | 38.1 | 24.1 | 13.7 |
+| Francia | 100.0 | 80.4 | 57.4 | 30.6 | 18.1 | 10.9 |
+| Brasil | 100.0 | 65.3 | 52.1 | 30.1 | 15.0 | 8.8 |
+| Senegal | 100.0 | 58.1 | 43.2 | 19.9 | 10.4 | 5.7 |
+| Alemania | 100.0 | 88.5 | 40.9 | 23.4 | 10.7 | 5.2 |
+| Portugal | 100.0 | 69.4 | 29.5 | 17.8 | 11.8 | 5.1 |
+| Países Bajos | 100.0 | 51.5 | 28.6 | 15.6 | 7.8 | 3.8 |
+| Marruecos | 100.0 | 48.5 | 28.5 | 15.3 | 7.3 | 3.5 |
+| Argelia | 100.0 | 53.1 | 32.7 | 14.5 | 6.4 | 3.0 |
+| Croacia | 100.0 | 30.6 | 11.0 | 6.3 | 3.4 | 1.2 |
+| México | 100.0 | 59.6 | 18.3 | 8.5 | 2.7 | 1.1 |
+| Bélgica | 100.0 | 41.9 | 29.9 | 9.7 | 5.1 | 0.8 |
+| Japón | 100.0 | 34.7 | 23.1 | 9.7 | 2.3 | 0.8 |
+| Canadá | 100.0 | 57.7 | 17.1 | 4.1 | 2.1 | 0.7 |
+| Noruega | 100.0 | 55.4 | 17.4 | 5.2 | 2.0 | 0.7 |
+| EE. UU. | 100.0 | 66.0 | 21.8 | 5.2 | 1.6 | 0.7 |
+| Egipto | 100.0 | 58.9 | 25.9 | 9.1 | 3.8 | 0.6 |
+| Suiza | 100.0 | 46.9 | 26.6 | 10.7 | 2.6 | 0.4 |
+| Colombia | 100.0 | 69.9 | 20.5 | 10.1 | 2.5 | 0.4 |
+| Costa de Marfil | 100.0 | 44.6 | 17.3 | 5.9 | 1.7 | 0.4 |
+| Sudáfrica | 100.0 | 42.3 | 7.7 | 1.5 | 0.6 | 0.4 |
+| Australia | 100.0 | 41.1 | 14.8 | 5.2 | 1.4 | 0.1 |
+| Austria | 100.0 | 21.9 | 6.6 | 2.5 | 0.7 | 0.1 |
+| Ecuador | 100.0 | 40.4 | 6.9 | 2.6 | 0.5 | 0.1 |
+| Cabo Verde | 100.0 | 14.9 | 5.9 | 1.3 | 0.2 | 0.1 |
+| RD Congo | 100.0 | 11.6 | 3.5 | 0.9 | 0.2 | 0.0 |
+| Suecia | 100.0 | 19.6 | 7.9 | 1.3 | 0.1 | 0.0 |
+| Bosnia-Herzegovina | 100.0 | 34.0 | 5.1 | 0.5 | 0.1 | 0.0 |
+| Ghana | 100.0 | 30.1 | 5.7 | 0.4 | 0.1 | 0.0 |
+| Paraguay | 100.0 | 11.5 | 2.0 | 0.3 | 0.1 | 0.0 |
+
+### Desde octavos de final
+
+| Selección | Octavos | Cuartos | Semis | Final | Campeón |
+|---|---|---|---|---|---|
+| Inglaterra | 100.0 | 76.5 | 46.6 | 29.3 | 19.9 |
+| España | 100.0 | 61.4 | 45.8 | 31.8 | 16.3 |
+| Francia | 100.0 | 85.7 | 53.2 | 27.4 | 16.0 |
+| Brasil | 100.0 | 70.6 | 35.7 | 19.8 | 12.5 |
+| Argentina | 100.0 | 68.8 | 50.8 | 22.7 | 9.0 |
+| Marruecos | 100.0 | 76.5 | 36.0 | 15.9 | 8.6 |
+| Portugal | 100.0 | 38.6 | 24.3 | 16.1 | 6.8 |
+| Bélgica | 100.0 | 61.1 | 15.9 | 7.9 | 3.2 |
+| Estados Unidos | 100.0 | 38.9 | 14.0 | 5.8 | 1.9 |
+| Colombia | 100.0 | 61.0 | 20.7 | 5.9 | 1.3 |
+| Noruega | 100.0 | 29.4 | 9.2 | 2.5 | 1.3 |
+| Suiza | 100.0 | 39.0 | 14.2 | 5.1 | 0.9 |
+| Canadá | 100.0 | 23.5 | 8.5 | 2.5 | 0.8 |
+| Egipto | 100.0 | 31.2 | 14.3 | 4.7 | 0.7 |
+| México | 100.0 | 23.5 | 8.5 | 2.3 | 0.7 |
+| Paraguay | 100.0 | 14.3 | 2.3 | 0.3 | 0.1 |
+
+### Desde cuartos de final
+
+| Selección | Cuartos | Semis | Final | Campeón |
+|---|---|---|---|---|
+| Inglaterra | 100.0 | 73.2 | 45.8 | 25.3 |
+| España | 100.0 | 75.7 | 43.8 | 23.0 |
+| Argentina | 100.0 | 70.4 | 34.5 | 17.7 |
+| Francia | 100.0 | 58.4 | 30.9 | 17.2 |
+| Marruecos | 100.0 | 41.6 | 17.0 | 7.8 |
+| Noruega | 100.0 | 26.8 | 11.1 | 3.7 |
+| Bélgica | 100.0 | 24.3 | 8.3 | 3.3 |
+| Suiza | 100.0 | 29.6 | 8.6 | 2.0 |
+
+### Desde semifinales
+
+| Selección | Semis | Final | Campeón |
+|---|---|---|---|
+| España | 100.0 | 50.1 | 27.3 |
+| Inglaterra | 100.0 | 55.5 | 27.1 |
+| Francia | 100.0 | 49.9 | 26.1 |
+| Argentina | 100.0 | 44.5 | 19.5 |
+
+> Todos los valores están en porcentaje (%), generados con `estadisticas_mundial.sort_values('Campeon', ascending=False)` al final de cada notebook.
+
+---
+
 ## 📂 Estructura del repositorio
 
 ```
@@ -117,7 +207,9 @@ Se muestra una tirada estocástica completa del cuadro eliminatorio (partido a p
 ├── 02_Limpieza_Datos/        # JOIN y limpieza → dataset modelable
 │   └── Data Cleaning.ipynb
 ├── 03_Modelado_Simulacion/   # Ingeniería de variables, XGBoost y Monte Carlo
-│   └── Poisson_octavos_VSC.ipynb
+│   ├── Poisson_16avos_VSC.ipynb
+│   ├── Poisson_octavos_VSC.ipynb
+│   ├── Poisson_cuartos_VSC.ipynb
+│   └── Poisson_semifinales_VSC.ipynb
 ├── Data/                     # Datos scrapeados y procesados (CSV)
 ```
-
