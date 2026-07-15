@@ -1,15 +1,16 @@
 # Simulaciones Mundial 2026 ⚽🏆
 
-👥 Integrantes
+## 👥 Integrantes
 
+- Ynga Vargas, Roberto José
+- Salón Ynga, Dangelo Emanuel
+- Tuesta Chiquizuta, María Carmen
+- Ramos Ocampo, Kevin
+- Chichipe Huamán, Jhenuar
+- Loja Alvarado, Rayan Emilio
 
-Ynga Vargas, Roberto José
-Salón Ynga, Dangelo Emanuel
-Tuesta Chiquizuta, María Carmen
-Ramos Ocampo, Kevin
-Chichipe Huamán, Jhenuar
-Loja Alvarado, Rayan Emilio
 ---
+
 ¿Quién va a ganar el Mundial 2026? Este repositorio responde con datos: scrapea todo el histórico de estadísticas de las selecciones, entrena dos modelos XGBoost y simula **1000 mundiales** con Monte Carlo para estimar el rendimiento esperado de cada selección — hasta predecir los partidos del torneo.
 
 ---
